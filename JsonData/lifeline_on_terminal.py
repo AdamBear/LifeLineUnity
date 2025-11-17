@@ -36,16 +36,16 @@ class Story(object):
 		scene_file = 'Data/scenes_' + lang + '.json'
 		choice_file = 'Data/choices_' + lang + '.json'
 
-		with open(scene_file,'r') as f:
+		with open(scene_file,'r',encoding='utf-8') as f:
 			self.scenes = json.load(f)
 
-		with open(choice_file,'r') as f:
+		with open(choice_file,'r',encoding='utf-8') as f:
 			self.choices = json.load(f)
 
 	def loadStatusData(self):
 		status_file = 'Data/status.json'
 		if os.path.exists(status_file):
-			with open(status_file,'r') as f:
+			with open(status_file,'r',encoding='utf-8') as f:
 				self.status = json.load(f)
 				
 		else:
@@ -58,9 +58,9 @@ class Story(object):
 	def saveStatusData(self, scene):
 		self.status['Settings']['atScene'] = scene
 		status_file = 'Data/status.json'
-		with open(status_file,'w') as f:
+		with open(status_file,'w',encoding='utf-8') as f:
 			# 转换为 json
-			json.dump(self.status, f)
+			json.dump(self.status, f, ensure_ascii=False)
 
 	def handleJump(self, line):
 		line = line[2:-2]
@@ -85,9 +85,9 @@ class Story(object):
 	def handleTalk(self, line):
 		if "$pills" in line or "$glowrods" in line or "$power" in line:
 			newLine = line.replace("$pills", self.status["pills"]).replace("$glowrods", self.status["glowrods"]).replace("$power", self.status["power"])
-			print newLine,'\n'
+			print(newLine,'\n')
 		else:
-			print line,'\n'
+			print(line,'\n')
 		# print line,'\n'
 		sleep(.1)
 		# if not self.fastMode: sleep(2.5)    # 快速模式 
@@ -97,14 +97,14 @@ class Story(object):
 		choice = self.choices[int(line[19:-2])]["actions"]
 		# 选项:黄色
 		echo('\033[33m')
-		print '0.',choice[0]['choice']
-		print '1.',choice[1]['choice'],'\033[0m'
+		print('0.',choice[0]['choice'])
+		print('1.',choice[1]['choice'],'\033[0m')
 		while 1:
 			try:
-				i = raw_input('>: ')
+				i = input('>: ')
 			except:
-				print '\n\n[*] Quit'
-				print '[*] Save game data\n'
+				print('\n\n[*] Quit')
+				print('[*] Save game data\n')
 				self.saveStatusData(scene)
 				exit()
 			if not i:
@@ -116,12 +116,12 @@ class Story(object):
 			if i.isdigit() and int(i) in (0,1):
 				i = int(i)
 				# 我的回答:黄色
-				print '\n\033[33m'+choice[i]['choice']+'\033[0m\n'
+				print('\n\033[33m'+choice[i]['choice']+'\033[0m\n')
 				self.status['Settings']['atScene'] = choice[i]['identifier']
 			
 				break
 			else:
-				print 'Please input a number (0-1)'
+				print('Please input a number (0-1)')
     # 循环执行
 	def atScene(self, scene):
 		# print(scene)
